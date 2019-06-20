@@ -1,0 +1,12 @@
+name = "fsc"
+version = "0.1.0"
+type = "Package"
+dependencies = { }
+
+[doc]
+port = 2_000
+include = [ ]
+
+[psp]
+jsdoc = true
+npmrc = true

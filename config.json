@@ -1,0 +1,104 @@
+{
+    "profiles": {
+        "profile_1": {
+            "target": "E:/Code/Slimio/agent/addons/FSC/data",
+            "interval": null,
+            "rules": {
+                "maximum_files": {
+                    "number": 2
+                },
+                "maximum_repository": {
+                    "number": 2
+                },
+                "age_file": {
+                    "milliseconds": 365
+                },
+                "age_repository": {
+                    "milliseconds": 365
+                },
+                "space_of_file_to_repository": {
+                    "per_cent": 3
+                },
+                "space_of_repository_to_repository": {
+                    "per_cent": 20
+                },
+                "limit_size_file": {
+                    "bytes": 50000
+                },
+                "limit_size_repository": { 
+                    "bytes": 1000000
+                },
+                "read_time_file": {
+                    "milliseconds": 2000
+                },
+                "exist_file": null,
+                "exist_repository": null,
+                "integrity": null
+            },
+            "monitor": {
+                "file_exist": null,
+                "files_number": null,
+                "files_age": null,
+                "file_integrity": null,
+                "file_space_used": null,
+                "file_readtime": null,
+                "repo_exist": null,
+                "repos_number": null,
+                "repos_age": null,
+                "repo_integrity": null,
+                "repo_space_used": null,
+                "repo_readtime": null
+            },
+            "active": true,
+            "type": "file_monitoring"
+        },
+        "profile_2": {
+            "target": "E:/Code/Slimio/agent/addons/FSC/data",
+            "interval": null,
+            "rules": {
+                "maximum_files": {
+                    "number": 50
+                },
+                "maximum_repository": {
+                    "number": 10
+                },
+                "age_file": {
+                    "days": 365
+                },
+                "age_repository": {
+                    "days": 365
+                },
+                "space_from_file_to_repository": {
+                    "per_cent": 5
+                },
+                "space_from_repository_to_repository": {
+                    "per_cent": 5
+                },
+                "size_file": 250,
+                "size_repository": 550,
+                "read_time_file": {
+                    "milliseconds": 2000
+                },
+                "exist_file": null,
+                "exist_repository": null,
+                "integrity": null
+            },
+            "monitor": {
+                "file_exist": true,
+                "files_number": true,
+                "files_age": true,
+                "file_integrity": true,
+                "file_space_used": true,
+                "file_readtime": true,
+                "repo_exist": true,
+                "repos_number": true,
+                "repos_age": true,
+                "repo_integrity": true,
+                "repo_space_used": true,
+                "repo_readtime": true
+            },
+            "active": false,
+            "type": "file_monitoring"
+        }
+    }
+}

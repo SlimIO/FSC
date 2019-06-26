@@ -22,7 +22,10 @@
         "url": "https://github.com/SlimIO/Fsc/issues"
     },
     "homepage": "https://github.com/SlimIO/Fsc#readme",
-    "dependencies": {},
+    "dependencies": {
+        "@slimio/alert": "^0.2.0",
+        "@slimio/is": "^1.5.1"
+    },
     "devDependencies": {
         "@commitlint/cli": "^8.0.0",
         "@commitlint/config-conventional": "^8.0.0",

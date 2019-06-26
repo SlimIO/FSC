@@ -3,38 +3,75 @@
         "profile_1": {
             "target": "E:/Code/Slimio/agent/addons/FSC/data",
             "interval": null,
-            "rules": {
-                "maximum_files": {
-                    "number": 2
+            "rules": [
+                {
+                    "name": "maximum_files",
+                    "value": 2,
+                    "interval": null
                 },
-                "maximum_repository": {
-                    "number": 2
+                {
+                    "name": "maximum_repository",
+                    "value": 2,
+                    "interval": null
                 },
-                "age_file": {
-                    "milliseconds": 365
+                {
+                    "name": "age_file",
+                    "value": 31536000000,
+                    "interval": null
                 },
-                "age_repository": {
-                    "milliseconds": 365
+                {
+                    "name": "age_repository",
+                    "value": 31536000000,
+                    "interval": null
                 },
-                "space_of_file_to_repository": {
-                    "per_cent": 3
+                {
+                    "name": "space_of_file_to_repository",
+                    "value": 3,
+                    "interval": null
                 },
-                "space_of_repository_to_repository": {
-                    "per_cent": 20
+                {
+                    "name": "space_of_repository_to_repository",
+                    "value": 20,
+                    "interval": null
                 },
-                "limit_size_file": {
-                    "bytes": 50000
+                {
+                    "name": "limit_size_file",
+                    "value": 5000,
+                    "interval": null
                 },
-                "limit_size_repository": { 
-                    "bytes": 1000000
+                {
+                    "name": "limit_size_repository",
+                    "value": 1000000,
+                    "interval": null
                 },
-                "read_time_file": {
-                    "milliseconds": 2000
+                {
+                    "name": "read_time_file",
+                    "value": 2000,
+                    "interval": null
                 },
-                "exist_file": null,
-                "exist_repository": null,
-                "integrity": null
-            },
+                {
+                    "name": "exist_files",
+                    "value": [
+                        ".gitignore",
+                        ".editorconfig",
+                        "slimio.toml"
+                    ],
+                    "interval": null
+                },
+                {
+                    "name": "exist_repositories",
+                    "value": [
+                        "test",
+                        "src"
+                    ],
+                    "interval": null
+                },
+                {
+                    "name": "integrity",
+                    "value": "slimio.toml",
+                    "interval": null
+                }
+            ],
             "monitor": {
                 "file_exist": null,
                 "files_number": null,
@@ -55,34 +92,75 @@
         "profile_2": {
             "target": "E:/Code/Slimio/agent/addons/FSC/data",
             "interval": null,
-            "rules": {
-                "maximum_files": {
-                    "number": 50
+            "rules": [
+                {
+                    "name": "maximum_files",
+                    "value": 2,
+                    "interval": 5000
                 },
-                "maximum_repository": {
-                    "number": 10
+                {
+                    "name": "maximum_repository",
+                    "value": 2,
+                    "interval": 5000
                 },
-                "age_file": {
-                    "days": 365
+                {
+                    "name": "age_file",
+                    "value": 31536000000,
+                    "interval": 5000
                 },
-                "age_repository": {
-                    "days": 365
+                {
+                    "name": "age_repository",
+                    "value": 31536000000,
+                    "interval": 5000
                 },
-                "space_from_file_to_repository": {
-                    "per_cent": 5
+                {
+                    "name": "space_of_file_to_repository",
+                    "value": 3,
+                    "interval": 5000
                 },
-                "space_from_repository_to_repository": {
-                    "per_cent": 5
+                {
+                    "name": "space_of_repository_to_repository",
+                    "value": 20,
+                    "interval": 5000
                 },
-                "size_file": 250,
-                "size_repository": 550,
-                "read_time_file": {
-                    "milliseconds": 2000
+                {
+                    "name": "limit_size_file",
+                    "value": 5000,
+                    "interval": 5000
                 },
-                "exist_file": null,
-                "exist_repository": null,
-                "integrity": null
-            },
+                {
+                    "name": "limit_size_repository",
+                    "value": 1000000,
+                    "interval": 5000
+                },
+                {
+                    "name": "read_time_file",
+                    "value": 2000,
+                    "interval": 5000
+                },
+                {
+                    "name": "exist_files",
+                    "value": [
+                        ".gitignore",
+                        ".editorconfig",
+                        "slimio.toml"
+                    ],
+                    "interval": 5000
+                },
+                {
+                    "name": "exist_repositories",
+                    "value": [
+                        "test",
+                        "src"
+                    ],
+                    "interval": 5000
+                },
+                {
+                    "name": "integrity",
+                    "value": "slimio.toml",
+                    "interval": 5000
+                }
+            ],
             "monitor": {
                 "file_exist": true,
                 "files_number": true,

@@ -2,8 +2,9 @@
 const { readFile } = require("fs").promises;
 const { join } = require("path");
 
-// Require utils functions
-const { ConfigFsc } = require("./src/utils");
+// Require master functions
+const { ConfigFsc } = require("./src/master");
+const { FscTools } = require("./src/utils");
 
 // Require Slimio Dependencies
 const Addon = require("@slimio/addon");
@@ -15,23 +16,24 @@ const FSC = new Addon("FSC", {
 
 }).lockOn("events");
 
-FSC.on("start", () => {
-    FSC.ready();
-    async function main() {
-        const json = await readFile(join(process.cwd(), "config.json"));
-        const jsonParsed = JSON.parse(json);
+// FSC.on("start", () => {
+//     FSC.ready();
+async function main() {
+    const json = await readFile(join(process.cwd(), "config.json"));
+    const jsonParsed = JSON.parse(json);
 
-        for (const [profileName, profile] of Object.entries(jsonParsed.profiles)) {
-            const { target, rules } = profile;
-            const classTool = new ConfigFsc(target, rules);
-            if (!profile.active) {
-                continue;
-            }
-            await classTool.checkRules();
+    for (const [profileName, profile] of Object.entries(jsonParsed.profiles)) {
+        const { target, rules } = profile;
+        const classTool = new ConfigFsc(target, rules);
+        const classTool2 = new FscTools(target, rules);
+        if (!profile.active) {
+            continue;
         }
+        await classTool.checkRules();
     }
-    main().catch(console.error);
-});
+}
+main().catch(console.error);
+// });
 
 FSC.on("stop", () => {
     console.log("addon stopped");

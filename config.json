@@ -1,7 +1,7 @@
 {
     "profiles": {
         "profile_1": {
-            "target": "E:/Code/Slimio/agent/addons/FSC/data",
+            "target": "E:/Code/Slimio/agent/addons/FSC/data/test.txt",
             "interval": null,
             "rules": [
                 {
@@ -11,7 +11,7 @@
                 },
                 {
                     "name": "maximum_repository",
-                    "value": 2,
+                    "value": 1,
                     "interval": null
                 },
                 {
@@ -51,19 +51,12 @@
                 },
                 {
                     "name": "exist_files",
-                    "value": [
-                        ".gitignore",
-                        ".editorconfig",
-                        "slimio.toml"
-                    ],
+                    "value": ".gitignore",
                     "interval": null
                 },
                 {
                     "name": "exist_repositories",
-                    "value": [
-                        "test",
-                        "src"
-                    ],
+                    "value": "test",
                     "interval": null
                 },
                 {
@@ -140,19 +133,12 @@
                 },
                 {
                     "name": "exist_files",
-                    "value": [
-                        ".gitignore",
-                        ".editorconfig",
-                        "slimio.toml"
-                    ],
+                    "value":".gitignore",
                     "interval": 5000
                 },
                 {
                     "name": "exist_repositories",
-                    "value": [
-                        "test",
-                        "src"
-                    ],
+                    "value": "test",
                     "interval": 5000
                 },
                 {

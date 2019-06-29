@@ -113,10 +113,13 @@ class FscTools {
      * @return {Number}
      */
     async spaceFileOfRep() {
+        // Constants
         const repotarget = path.parse(this.target);
         const targetBaseName = repotarget.base;
         const parentTarget = repotarget.dir;
         const repo = await readdir(parentTarget);
+
+        // initialize counter
         let totalSize = 0;
         let targetSize = 0;
         for (const element of repo) {

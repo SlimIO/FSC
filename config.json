@@ -1,7 +1,7 @@
 {
     "profiles": {
         "profile_1": {
-            "target": "E:/Code/Slimio/agent/addons/FSC/data/test.txt",
+            "target": "E:/Code/Slimio/agent/addons/FSC/data",
             "interval": null,
             "rules": [
                 {

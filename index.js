@@ -25,7 +25,6 @@ async function main() {
     for (const [profileName, profile] of Object.entries(jsonParsed.profiles)) {
         const { target, rules } = profile;
         const classTool = new ConfigFsc(target, rules);
-        const classTool2 = new FscTools(target, rules);
         if (!profile.active) {
             continue;
         }

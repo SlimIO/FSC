@@ -1,42 +1,26 @@
 // Require Slimio dependencies
 const is = require("@slimio/is");
-const Addon = require("@slimio/addon");
-const alert = require("@slimio/alert");
 
 // Require Node.js Dependencies
-const { readdir, stat, readFile } = require("fs").promises;
-const { parse, join } = require("path");
-
-// Require third-party Dependencies
-const { performance } = require("perf_hooks");
-const { createHash } = require("crypto");
-
-// Create addon FSC
-const FSC = new Addon("FSC", {
-    version: "0.1.0",
-    verbose: true
-
-}).lockOn("events");
-
-// // Declare alarm
-// const { Alarm } = alert(FSC);
+const { readdir, stat } = require("fs").promises;
+const { join } = require("path");
+const path = require("path");
 
 /**
- * @class ConfigFsc
+ * @class FscTools
  *
- * @classdesc JSON Config loader for scanning repositories
- *
+ * @classdesc class use to give the tools to the config loader to monitor a file or a folder
  * @property {String} target Path to the configuration file
- * @author Irvin MONTES <irvin_montes@outlook.fr>
+ * @property {Object} rules rules of the configuration file
  * @version 0.1.0
  */
-class ConfigFsc {
+class FscTools {
     /**
      * @version 0.1.0
      *
      * @constructor
      * @param {!String} profileTarget Absolute path to the configuration file
-     * @param {!Array} profileRules  Rules of the configuration file
+     * @param {!Object} profileRules  Rules of the configuration file
      */
     constructor(profileTarget, profileRules) {
         if (!is.string(profileTarget)) {
@@ -59,57 +43,101 @@ class ConfigFsc {
      * @async
      * @method maxFiles
      * @desc Return the number of files inside a parent repository
-     * @memberof ConfigFsc
+     * @memberof FscTools
      * @return {Number}
      */
-    async checkRules() {
+    async maxFiles() {
         const repo = await readdir(this.target);
-        for (const rule of this.rules) {
-            if (rule.value === null) {
+        let count = 0;
+        for (const data of repo) {
+            const info = await stat(join(this.target, data));
+            if (!info.isFile()) {
                 continue;
             }
-            if (rule.name === "maximum_files") {
-                let count = 0;
-                for (const data of repo) {
-                    const info = await stat(join(this.target, data));
-                    if (info.isFile()) {
-                        count += 1;
-                    }
-                }
-                if (count > rule.value) {
-                    if (rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    console.log(`"Error ce dossier contient ${count} fichier(s), il devrait n'en contenir que ${rule.value}"`);
-                    // new Alarm(`"Error ce dossier contient ${count} fichier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
-                }
-            }
-            if (rule.name === "maximum_repository") {
-                let count = 0;
-                const repo = await readdir(this.target);
-                for (const data of repo) {
-                    const info = await stat(join(this.target, data));
-                    if (info.isDirectory()) {
-                        count += 1;
-                    }
-                }
-                if (count > rule.value) {
-                    if (rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    console.log(`"Error ce dossier contient ${count} dossier(s), il devrait n'en contenir que ${rule.value}"`);
-                    // new Alarm(`"Error ce dossier contient ${count} dossier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
-                }
-            }
+            count += 1;
         }
+
+        return count;
+    }
+
+    /**
+     * @version 0.1.0
+     *
+     * @public
+     * @async
+     * @method maxRep
+     * @desc Return the number of repository inside a parent repository
+     * @memberof FscTools
+     * @return {Number}
+     */
+    async maxRep() {
+        const repo = await readdir(this.target);
+        let count = 0;
+        for (const data of repo) {
+            const info = await stat(join(this.target, data));
+            if (!info.isDirectory()) {
+                continue;
+            }
+            count += 1;
+        }
+
+        return count;
+    }
+
+    /**
+     * @version 0.1.0
+     *
+     * @public
+     * @async
+     * @method ageRep
+     * @desc Return the age of a repository
+     * @memberof FscTools
+     * @return {Number}
+     */
+    async ageRep() {
+        const repo = await stat(this.target);
+        const repAge = repo.birthtimeMs;
+        const date = Date.now();
+
+        return date - repAge;
+    }
+
+    /**
+     * @version 0.1.0
+     *
+     * @public
+     * @async
+     * @method spaceFileOfRep
+     * @desc Returns the use space of a file relative to its parent directory
+     * @memberof FscTools
+     * @return {Number}
+     */
+    async spaceFileOfRep() {
+        const repotarget = path.parse(this.target);
+        const targetBaseName = repotarget.base;
+        const parentTarget = repotarget.dir;
+        const repo = await readdir(parentTarget);
+        let totalSize = 0;
+        let targetSize = 0;
+        for (const element of repo) {
+            const elementParsed = path.parse(element);
+            const targetJuncture = join(parentTarget, elementParsed.base);
+            const stats = await stat(targetJuncture);
+            if (stats.isDirectory()) {
+                continue;
+            }
+            if (elementParsed.base === targetBaseName) {
+                targetSize += stats.size;
+                totalSize += stats.size;
+                continue;
+            }
+            totalSize += stats.size;
+        }
+
+        return Math.round(targetSize * 100 / totalSize);
     }
 }
 
 module.exports = {
-    ConfigFsc
+    FscTools
 };
-

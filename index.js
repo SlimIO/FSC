@@ -19,9 +19,13 @@ const FSC = new Addon("FSC", {
 // FSC.on("start", () => {
 //     FSC.ready();
 async function main() {
+    // Read config.json
     const json = await readFile(join(process.cwd(), "config.json"));
+    // Parse config.json
     const jsonParsed = JSON.parse(json);
 
+
+    // Check all rules of all profiles
     for (const [profileName, profile] of Object.entries(jsonParsed.profiles)) {
         const { target, rules } = profile;
         const classTool = new ConfigFsc(target, rules);

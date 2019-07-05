@@ -1,8 +1,10 @@
+/* eslint-disable camelcase */
+/* eslint-disable require-jsdoc */
 // Require Slimio dependencies
 const is = require("@slimio/is");
 
 // Require Node.js Dependencies
-const { readdir, stat } = require("fs").promises;
+const { readdir, stat, readFile } = require("fs").promises;
 const { join } = require("path");
 const path = require("path");
 
@@ -37,27 +39,43 @@ class FscTools {
     }
 
     /**
-     * @version 0.1.0
-     *
-     * @public
      * @async
-     * @method maxFiles
-     * @desc Return the number of files inside a parent repository
-     * @memberof FscTools
-     * @return {Number}
+     * @method how_many_patern_match
+     * @param {String=} pattern pattern
+     * @param {String=} location location
+     * @returns {AsyncIterableIterator<Number>}
      */
-    async maxFiles() {
-        const repo = await readdir(this.target);
-        let count = 0;
-        for (const data of repo) {
-            const info = await stat(join(this.target, data));
-            if (!info.isFile()) {
-                continue;
-            }
-            count += 1;
+    async* how_many_patern_match(pattern = null, location = null) {
+        const target = location === null ? this.target : location;
+
+        const st = await stat(target);
+        if (!st.isDirectory()) {
+            throw new Error("target must be a path to a directory");
+        }
+        else if (pattern !== null && Object.prototype.toString.call(pattern).slice(8, -1) !== "RegExp") {
+            throw new TypeError("pattern must be a RegExp or a null value");
         }
 
-        return count;
+        const repo = await readdir(target);
+        let counter = 0;
+        const stats = await Promise.all(
+            repo.map((file) => stat(join(target, file)))
+        );
+
+        for (let index = 0; index < repo.length; index++) {
+            const dc = stats[index];
+            if (dc.isDirectory()) {
+                yield* this.how_many_patern_match(pattern, join(target, repo[index]));
+            }
+            else if (dc.isFile()) {
+                const readedFile = await readFile(join(target, repo[index]));
+                if (pattern.test(readedFile.toString())) {
+                    counter += 1;
+                }
+            }
+        }
+
+        yield counter;
     }
 
     /**
@@ -115,6 +133,7 @@ class FscTools {
     async spaceFileOfRep() {
         // Constants
         const repotarget = path.parse(this.target);
+        console.log(repotarget);
         const targetBaseName = repotarget.base;
         const parentTarget = repotarget.dir;
         const repo = await readdir(parentTarget);

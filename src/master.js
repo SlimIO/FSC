@@ -3,6 +3,7 @@ const { stat } = require("fs").promises;
 
 // Require Class FscTools
 const { FscTools } = require("./utils");
+const { regex } = require("../regex.js");
 /**
  * @class ConfigFsc
  *
@@ -23,60 +24,25 @@ class ConfigFsc extends FscTools {
      * @return {Number}
      */
     async checkRules() {
-        const targetType = await stat(this.target);
         for (const rule of this.rules) {
-            if (rule.value === null) {
-                continue;
-            }
-            else if (targetType.isFile()) {
-                if (rule.name === "space_of_file_to_repository") {
-                    const counter = await this.spaceFileOfRep();
-                    if (counter <= rule.value && rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    // eslint-disable-next-line
-                    console.log(`"Error ce fichier fait ${counter}% du dossier, il ne devrait pas dépasser ${rule.value}%"`);
-                    // new Alarm(`"Error ce dossier contient ${counter} dossier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
+            if (rule.name === "how_many_patern_match") {
+                const it = await this.how_many_patern_match(/* rule.repository.patern */regex);
+                let match = 0;
+                for await (const count of it) {
+                    match += count;
                 }
-            }
-            else {
-                if (rule.name === "maximum_files") {
-                    const counter = await this.maxFiles();
-                    if (counter <= rule.value && rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    console.log(`"Error ce dossier contient ${counter} fichier(s), il devrait n'en contenir que ${rule.value}"`);
-                    // new Alarm(`"Error ce dossier contient ${counter} fichier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
+                if (match <= rule.value) {
+                    continue;
                 }
-                else if (rule.name === "maximum_repository") {
-                    const counter = await this.maxRep();
-                    if (counter <= rule.value && rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    console.log(`"Error ce dossier contient ${counter} dossier(s), il devrait n'en contenir que ${rule.value}"`);
-                    // new Alarm(`"Error ce dossier contient ${counter} dossier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
-                }
-                else if (rule.name === "age_repository") {
-                    const counter = await this.ageRep();
-                    if (counter <= rule.value && rule.interval !== null && typeof rule.interval === "number") {
-                        continue;
-                    }
-                    // eslint-disable-next-line
-                    console.log(`"Error ce dossier est crée depuis ${counter}Ms, il devrait être supprimé après ${rule.value}Ms"`);
-                    // new Alarm(`"Error ce dossier contient ${counter} dossier(s), il devrait n'en contenir que ${rule.value}"`, {
-                    //     correlateKey: "file_limit_reached"
-                    // });
-                }
+                console.log(`"Ce dossier contient ${match} fichier(s) correspondant au pattern indiquer"`);
+                // new Alarm(`"Error ce dossier contient ${counter} fichier(s), il devrait n'en contenir que ${rule.value}"`, {
+                //     correlateKey: "file_limit_reached"
+                // });
             }
         }
     }
 }
+
 
 module.exports = {
     ConfigFsc

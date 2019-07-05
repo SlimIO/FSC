@@ -5,64 +5,69 @@
             "interval": null,
             "rules": [
                 {
-                    "name": "maximum_files",
-                    "value": 2,
-                    "interval": null
+                    "name": "how_many_patern_match",
+                    "repository": {
+                        "patern": "/\blog/g",
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "maximum_repository",
-                    "value": 1,
-                    "interval": null
+                    "name": "age_limiter",
+                    "fichier": {
+                        "value": 31536000000,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 31536000000,
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "age_file",
-                    "value": 31536000000,
-                    "interval": null
-                },
-                {
-                    "name": "age_repository",
-                    "value": 31536000000,
-                    "interval": null
-                },
-                {
-                    "name": "space_of_file_to_repository",
-                    "value": 3,
-                    "interval": null
-                },
-                {
-                    "name": "space_of_repository_to_repository",
-                    "value": 20,
-                    "interval": null
+                    "name": "space_limiter",
+                    "fichier": {
+                        "value": 3,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 20,
+                        "interval": 5000
+                    }
                 },
                 {
                     "name": "limit_size_file",
-                    "value": 5000,
-                    "interval": null
+                    "fichier": {
+                        "value": 50000,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 1000000,
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "limit_size_repository",
-                    "value": 1000000,
-                    "interval": null
-                },
-                {
-                    "name": "read_time_file",
-                    "value": 2000,
-                    "interval": null
+                    "name": "read_time",
+                    "fichier": {
+                        "value": 2000,
+                        "interval": null
+                    }
                 },
                 {
                     "name": "exist_files",
-                    "value": ".gitignore",
-                    "interval": null
-                },
-                {
-                    "name": "exist_repositories",
-                    "value": "test",
-                    "interval": null
+                    "fichier": {
+                        "value": ".gitignore",
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": "test",
+                        "interval": 5000
+                    }
                 },
                 {
                     "name": "integrity",
-                    "value": "slimio.toml",
-                    "interval": null
+                    "fichier": {
+                        "value": "slimio.toml",
+                        "interval": null
+                    }
                 }
             ],
             "monitor": {
@@ -87,64 +92,73 @@
             "interval": null,
             "rules": [
                 {
-                    "name": "maximum_files",
-                    "value": 2,
-                    "interval": 5000
+                    "name": "entity_limiter",
+                    "fichier": {
+                        "value": 2,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 1,
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "maximum_repository",
-                    "value": 2,
-                    "interval": 5000
+                    "name": "age_limiter",
+                    "fichier": {
+                        "value": 31536000000,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 31536000000,
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "age_file",
-                    "value": 31536000000,
-                    "interval": 5000
-                },
-                {
-                    "name": "age_repository",
-                    "value": 31536000000,
-                    "interval": 5000
-                },
-                {
-                    "name": "space_of_file_to_repository",
-                    "value": 3,
-                    "interval": 5000
-                },
-                {
-                    "name": "space_of_repository_to_repository",
-                    "value": 20,
-                    "interval": 5000
+                    "name": "space_limiter",
+                    "fichier": {
+                        "value": 3,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 20,
+                        "interval": 5000
+                    }
                 },
                 {
                     "name": "limit_size_file",
-                    "value": 5000,
-                    "interval": 5000
+                    "fichier": {
+                        "value": 50000,
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": 1000000,
+                        "interval": 5000
+                    }
                 },
                 {
-                    "name": "limit_size_repository",
-                    "value": 1000000,
-                    "interval": 5000
-                },
-                {
-                    "name": "read_time_file",
-                    "value": 2000,
-                    "interval": 5000
+                    "name": "read_time",
+                    "fichier": {
+                        "value": 2000,
+                        "interval": null
+                    }
                 },
                 {
                     "name": "exist_files",
-                    "value":".gitignore",
-                    "interval": 5000
-                },
-                {
-                    "name": "exist_repositories",
-                    "value": "test",
-                    "interval": 5000
+                    "fichier": {
+                        "value": ".gitignore",
+                        "interval": 5000
+                    },
+                    "repository": {
+                        "value": "test",
+                        "interval": 5000
+                    }
                 },
                 {
                     "name": "integrity",
-                    "value": "slimio.toml",
-                    "interval": 5000
+                    "fichier": {
+                        "value": "slimio.toml",
+                        "interval": null
+                    }
                 }
             ],
             "monitor": {

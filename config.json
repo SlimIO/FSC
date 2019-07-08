@@ -1,182 +1,38 @@
 {
     "profiles": {
         "profile_1": {
-            "target": "E:/Code/Slimio/agent/addons/FSC/data",
-            "interval": null,
-            "rules": [
-                {
-                    "name": "how_many_patern_match",
-                    "repository": {
-                        "patern": "/\blog/g",
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "age_limiter",
-                    "fichier": {
-                        "value": 31536000000,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 31536000000,
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "space_limiter",
-                    "fichier": {
-                        "value": 3,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 20,
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "limit_size_file",
-                    "fichier": {
-                        "value": 50000,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 1000000,
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "read_time",
-                    "fichier": {
-                        "value": 2000,
-                        "interval": null
-                    }
-                },
-                {
-                    "name": "exist_files",
-                    "fichier": {
-                        "value": ".gitignore",
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": "test",
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "integrity",
-                    "fichier": {
-                        "value": "slimio.toml",
-                        "interval": null
-                    }
-                }
-            ],
-            "monitor": {
-                "file_exist": null,
-                "files_number": null,
-                "files_age": null,
-                "file_integrity": null,
-                "file_space_used": null,
-                "file_readtime": null,
-                "repo_exist": null,
-                "repos_number": null,
-                "repos_age": null,
-                "repo_integrity": null,
-                "repo_space_used": null,
-                "repo_readtime": null
-            },
+            "target": "E:/Code/Slimio/fsc_agent/addons/fsc/data/test.txt",
+            "interval": 1000,
             "active": true,
-            "type": "file_monitoring"
-        },
-        "profile_2": {
-            "target": "E:/Code/Slimio/agent/addons/FSC/data",
-            "interval": null,
             "rules": [
                 {
-                    "name": "entity_limiter",
-                    "fichier": {
-                        "value": 2,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 1,
-                        "interval": 5000
-                    }
-                },
-                {
                     "name": "age_limiter",
-                    "fichier": {
-                        "value": 31536000000,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 31536000000,
-                        "interval": 5000
-                    }
+                    "value": 3153
                 },
                 {
                     "name": "space_limiter",
-                    "fichier": {
-                        "value": 3,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 20,
-                        "interval": 5000
-                    }
+                    "value": 3
                 },
                 {
-                    "name": "limit_size_file",
-                    "fichier": {
-                        "value": 50000,
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": 1000000,
-                        "interval": 5000
-                    }
+                    "name": "files_number",
+                    "value": 3
+                },
+                {
+                    "name": "repository_number",
+                    "value": 1
+                },
+                {
+                    "name": "size_limiter",
+                    "value": 10
                 },
                 {
                     "name": "read_time",
-                    "fichier": {
-                        "value": 2000,
-                        "interval": null
-                    }
+                    "value": 1
                 },
                 {
-                    "name": "exist_files",
-                    "fichier": {
-                        "value": ".gitignore",
-                        "interval": 5000
-                    },
-                    "repository": {
-                        "value": "test",
-                        "interval": 5000
-                    }
-                },
-                {
-                    "name": "integrity",
-                    "fichier": {
-                        "value": "slimio.toml",
-                        "interval": null
-                    }
+                    "name": "integrity"
                 }
-            ],
-            "monitor": {
-                "file_exist": true,
-                "files_number": true,
-                "files_age": true,
-                "file_integrity": true,
-                "file_space_used": true,
-                "file_readtime": true,
-                "repo_exist": true,
-                "repos_number": true,
-                "repos_age": true,
-                "repo_integrity": true,
-                "repo_space_used": true,
-                "repo_readtime": true
-            },
-            "active": false,
-            "type": "file_monitoring"
+            ]
         }
     }
 }

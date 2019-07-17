@@ -34,10 +34,7 @@ async function entityAge(target) {
 async function filesNumber(target, name) {
     const st = await stat(target);
     let files = 0;
-    if (st.isFile()) {
-        console.log(`Vous devez fournir un dossier comme path: ${name} rule : files_number`);
-    }
-    else if (st.isDirectory()) {
+    if (st.isDirectory()) {
         const repo = await readdir(target);
         for (const file of repo) {
             const test = await stat(join(target, file));
@@ -63,10 +60,7 @@ async function filesNumber(target, name) {
 async function repositoryNumber(target, name) {
     const st = await stat(target);
     let repository = 0;
-    if (st.isFile()) {
-        console.log(`Vous devez fournir un dossier comme path: ${name} rule : repository_number`);
-    }
-    else if (st.isDirectory()) {
+    if (st.isDirectory()) {
         const repo = await readdir(target);
         for (const file of repo) {
             const test = await stat(join(target, file));
@@ -136,9 +130,6 @@ async function dirSize(location = null) {
  */
 async function readTime(target) {
     const st = await stat(target);
-    if (!st.isFile()) {
-        console.log("The target must be a path to a file");
-    }
     const start = performance.now();
     await readFile(target);
 
@@ -181,9 +172,6 @@ async function spaceOfTarget(target) {
  */
 async function integrity(target) {
     const st = await stat(target);
-    if (!st.isFile()) {
-        console.log("vous devez mettre un file en path");
-    }
     const str = await readFile(target, "utf-8");
     const shasum = createHash("sha1").update(str).digest("utf8");
 

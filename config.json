@@ -3,8 +3,8 @@
         "profile_1": {
             "name": "profile_1",
             "target": "E:/Code/data/test.txt",
-            "interval": 2,
-            "active": true,
+            "interval": 1,
+            "active": false,
             "metrics": true,
             "rules": [
                 {
@@ -30,42 +30,6 @@
                 {
                     "name": "read_time",
                     "value": 0.5
-                },
-                {
-                    "name": "integrity"
-                }
-            ]
-        },
-        "profile_2": {
-            "name": "profile_2",
-            "target": "E:/Code/data/test.txt",
-            "interval": 2,
-            "active": true,
-            "metrics": true,
-            "rules": [
-                {
-                    "name": "age_limiter",
-                    "value": 3153
-                },
-                {
-                    "name": "space_limiter",
-                    "value": 3
-                },
-                {
-                    "name": "files_number",
-                    "value": 3
-                },
-                {
-                    "name": "repository_number",
-                    "value": 1
-                },
-                {
-                    "name": "size_limiter",
-                    "value": 10
-                },
-                {
-                    "name": "read_time",
-                    "value": 0.1
                 },
                 {
                     "name": "integrity"

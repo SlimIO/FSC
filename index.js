@@ -159,14 +159,17 @@ FSC.on("awake", async() => {
         writeOnSet: true
     });
     await cfg.read();
-    
-    const intervalTest = Object.values(cfg.payload.profiles);
-    const arr = [];
- 
+
+    let arr = [];
     cfg.observableOf("profiles").subscribe({
         next(currProfiles) {
+            const intervalTest = Object.values(currProfiles);
+            if (intervalTest.length === 0) {
+                arr = [];
+            }
             for (let id = 0; id < intervalTest.length; id++) {
                 const interval = currProfiles[intervalTest[id].name].interval;
+                const active = currProfiles[intervalTest[id].name].active;
                 intervalTest[id].interval = new Scheduler({ interval });
                 arr[id] = intervalTest[id];
             }
@@ -175,8 +178,11 @@ FSC.on("awake", async() => {
             console.error(err);
         }
     });
-    setInterval(async() => {
+    intervalSet = setInterval(async() => {
         for (const profile of arr) {
+            if (!profile.active) {
+                continue;
+            }
             if (!profile.interval.walk()) {
                 continue;
             }
@@ -192,11 +198,5 @@ FSC.on("close", async() => {
     await cfg.close();
     console.log("addon stopped");
 });
-
-
-// FSC.registerCallback(async function main() {
-//     console.log("hello world");
-// });
-// FSC.schedule("main", new Scheduler({ interval: 1 }));
 
 module.exports = FSC;

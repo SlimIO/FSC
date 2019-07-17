@@ -159,17 +159,16 @@ FSC.on("awake", async() => {
         writeOnSet: true
     });
     await cfg.read();
-    const intervalTest = await Promise.all(
-        Object.values(cfg.payload.profiles).map((profile) => profile)
-    );
-
-    let arr = [];
+    
+    const intervalTest = Object.values(cfg.payload.profiles);
+    const arr = [];
+ 
     cfg.observableOf("profiles").subscribe({
-        next() {
-            arr = [];
+        next(currProfiles) {
             for (let id = 0; id < intervalTest.length; id++) {
-                intervalTest[id].interval = new Scheduler({ interval: Number(`${cfg.get(`profiles.${intervalTest[id].name}.interval`)}`) });
-                arr.push(intervalTest[id]);
+                const interval = currProfiles[intervalTest[id].name].interval;
+                intervalTest[id].interval = new Scheduler({ interval });
+                arr[id] = intervalTest[id];
             }
         },
         error(err) {

@@ -42,11 +42,8 @@
         "@slimio/addon": "^0.18.0",
         "@slimio/alert": "^0.2.0",
         "@slimio/config": "^0.13.0",
-        "@slimio/is": "^1.5.1",
         "@slimio/metrics": "^0.4.0",
-        "@slimio/scheduler": "^0.6.0",
-        "crypto": "^1.0.1",
-        "perf_hooks": "0.0.1"
+        "@slimio/scheduler": "^0.6.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.0.0",
@@ -67,7 +64,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-push": "npm test",
+            "pre-push": "eslint && npm test",
             "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
         }
     },

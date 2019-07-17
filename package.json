@@ -15,7 +15,23 @@
         "type": "git",
         "url": "git+https://github.com/SlimIO/Fsc.git"
     },
-    "keywords": [],
+    "keywords": [
+        "SlimIO",
+        "FSC",
+        "Monitoring",
+        "Files",
+        "Repository",
+        "Supervision",
+        "Check",
+        "Alarm",
+        "JSON",
+        "Config",
+        "Schema",
+        "Loader",
+        "observable",
+        "reactive",
+        "hotreload"
+      ],
     "author": "SlimIO",
     "license": "MIT",
     "bugs": {

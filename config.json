@@ -4,24 +4,24 @@
             "name": "profile_1",
             "target": "E:/Code/data/test.txt",
             "interval": 1,
-            "active": false,
+            "active": true,
             "metrics": true,
             "rules": [
                 {
                     "name": "age_limiter",
-                    "value": 3153
+                    "value": 9999999999999
                 },
                 {
                     "name": "space_limiter",
-                    "value": 3
+                    "value": 39999999999
                 },
                 {
                     "name": "files_number",
-                    "value": 3
+                    "value": 39999999
                 },
                 {
                     "name": "repository_number",
-                    "value": 1
+                    "value": 199999
                 },
                 {
                     "name": "size_limiter",
@@ -29,7 +29,7 @@
                 },
                 {
                     "name": "read_time",
-                    "value": 0.5
+                    "value": 599
                 },
                 {
                     "name": "integrity"

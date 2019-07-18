@@ -137,18 +137,6 @@ async function checkRules(rules, target, name, metrics) {
                 }
                 break;
             }
-            case "integrity":
-            {
-                const it = await integrity(target);
-                if (st.isDirectory()) {
-                    // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
-                    //     correlateKey: "integrity_alarm",
-                    //     entity: MyEntity
-                    // });
-                    break;
-                }
-                break;
-            }
         }
     }
 }
@@ -167,9 +155,16 @@ FSC.on("awake", async() => {
             if (intervalTest.length === 0) {
                 arr = [];
             }
+
             for (let id = 0; id < intervalTest.length; id++) {
-                const interval = currProfiles[intervalTest[id].name].interval;
-                const active = currProfiles[intervalTest[id].name].active;
+                const setRules = new Set();
+                for (const rule of intervalTest[id].rules) {
+                    setRules.add(rule.name);
+                }
+                if (setRules.has("integrity")) {
+                    intervalTest[id].started = false;
+                }
+                const interval = intervalTest[id].interval;
                 intervalTest[id].interval = new Scheduler({ interval });
                 arr[id] = intervalTest[id];
             }
@@ -180,11 +175,20 @@ FSC.on("awake", async() => {
     });
     intervalSet = setInterval(async() => {
         for (const profile of arr) {
+            if (!profile.interval.walk()) {
+                continue;
+            }
             if (!profile.active) {
                 continue;
             }
-            if (!profile.interval.walk()) {
-                continue;
+            if (Reflect.has(profile, "started")) {
+                if (profile.started === false) {
+                    console.log("demarage");
+                    profile.started = await integrity(profile.target);
+                }
+                else if (profile.started !== await integrity(profile.target)) {
+                    console.log(`${profile.name} corruption d'integrité du fichier ${profile.target}`);
+                }
             }
             await access(profile.target);
             await checkRules(profile.rules, profile.target, profile.name, profile.metrics);

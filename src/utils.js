@@ -172,10 +172,13 @@ async function spaceOfTarget(target) {
  */
 async function integrity(target) {
     const st = await stat(target);
-    const str = await readFile(target, "utf-8");
-    const shasum = createHash("sha1").update(str).digest("utf8");
+    if (st.isFile()) {
+        const str = await readFile(target, "utf-8");
+        const shasum = createHash("sha1").update(str).digest("utf8");
 
-    return shasum;
+        return shasum;
+    }
+    console.log("vous devez fournir un fichier en target");
 }
 
 module.exports = {

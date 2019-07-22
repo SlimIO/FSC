@@ -31,7 +31,7 @@
         "observable",
         "reactive",
         "hotreload"
-      ],
+    ],
     "author": "SlimIO",
     "license": "MIT",
     "bugs": {

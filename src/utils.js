@@ -1,5 +1,6 @@
 // Require Node.js Dependencies
 const { readdir, stat, readFile } = require("fs").promises;
+const { createReadStream } = require("fs");
 const { join } = require("path");
 const path = require("path");
 
@@ -130,10 +131,26 @@ async function dirSize(location = null) {
  */
 async function readTime(target) {
     const st = await stat(target);
-    const start = performance.now();
-    await readFile(target);
+    if (st.size < 64000) {
+        const start = performance.now();
+        await readFile(target);
 
-    return (performance.now() - start).toFixed(2);
+        return (performance.now() - start).toFixed(2);
+    }
+    let arr;
+    const promise1 = new Promise((resolve, reject) => {
+        const stream = createReadStream(target, { highWaterMark: 64000 });
+        const start = performance.now();
+        stream.on("data", () => {
+            // do thing
+        });
+        stream.on("end", () => {
+            resolve(arr = (performance.now() - start).toFixed(2));
+        });
+    });
+    await promise1;
+
+    return arr;
 }
 
 /**
@@ -167,18 +184,35 @@ async function spaceOfTarget(target) {
  * @async
  * @func integrity
  * @param {!String} target location
- * @desc check the integrity of a file on an interval
+ * @desc check the integrity of a file
  * @returns {Promise<String>}
  */
 async function integrity(target) {
     const st = await stat(target);
     if (st.isFile()) {
-        const str = await readFile(target, "utf-8");
-        const shasum = createHash("sha1").update(str).digest("utf8");
+        if (st.size < 64000) {
+            const str = await readFile(target, "utf-8");
+            const shasum = createHash("sha1").update(str).digest("utf8");
 
-        return shasum;
+            return shasum;
+        }
+        let arr;
+        const promise1 = new Promise((resolve, reject) => {
+            const stream = createReadStream(target, { highWaterMark: 64000 });
+            let data = "";
+            stream.on("data", (chunk) => {
+                data += chunk;
+            });
+            stream.on("end", () => {
+                resolve(arr = createHash("sha1").update(data).digest("utf8"));
+            });
+        });
+        await promise1;
+
+        return arr;
     }
-    console.log("vous devez fournir un fichier en target");
+
+    return console.log("vous devez fournir un fichier en target");
 }
 
 module.exports = {

@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "additionalProperties": false,
+    "properties": {
+        "profiles": {
+            "patternProperties": {
+                "[a-zA-Z]": {
+                    "type": "object",
+                    "required": [
+                        "name",
+                        "target",
+                        "interval",
+                        "active",
+                        "rules"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "target": {
+                            "type": "string"
+                        },
+                        "interval": {
+                            "type": "number"
+                        },
+                        "active": {
+                            "type": "boolean"
+                        },
+                        "metrics": {
+                            "type": "boolean"
+                        },
+                        "integrity": {
+                            "type": "boolean"
+                        },
+                        "rules": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "enum": [
+                                            "age_limiter",
+                                            "space_limiter",
+                                            "files_number",
+                                            "repository_number",
+                                            "size_limiter",
+                                            "read_time",
+                                            "integrity"
+                                        ]
+                                    },
+                                    "value": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": [
+                                    "name", "value"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

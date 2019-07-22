@@ -18,14 +18,14 @@ const FSC = new Addon("FSC", {
     verbose: true
 }).lockOn("events");
 const { Entity } = metrics(FSC);
-const { Alarm } = alert(FSC);
+// const { Alarm } = alert(FSC);
 
 let intervalId;
 
 // Déclare entities and MIC
-const MyEntity = new Entity("MyEntity", {
-    description: "Central metricsing"
-});
+// const MyEntity = new Entity("MyEntity", {
+//     description: "Central metricsing"
+// });
 
 
 /**
@@ -143,6 +143,7 @@ async function checkRules(rules, target, name, metrics) {
 
 FSC.on("awake", async() => {
     cfg = new Config(join(__dirname, "config.json"), {
+        createOnNoEntry: true,
         autoReload: true,
         writeOnSet: true
     });
@@ -158,9 +159,7 @@ FSC.on("awake", async() => {
 
             for (let id = 0; id < intervalTest.length; id++) {
                 const setRules = new Set();
-                for (const rule of intervalTest[id].rules) {
-                    setRules.add(rule.name);
-                }
+                setRules.add(intervalTest[id].name);
                 if (setRules.has("integrity")) {
                     intervalTest[id].started = false;
                 }
@@ -183,7 +182,6 @@ FSC.on("awake", async() => {
             }
             if (Reflect.has(profile, "started")) {
                 if (profile.started === false) {
-                    console.log("demarage");
                     profile.started = await integrity(profile.target);
                 }
                 else if (profile.started !== await integrity(profile.target)) {

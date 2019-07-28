@@ -7,10 +7,31 @@ const { readdir, stat, readFile } = require("fs").promises;
 const { createReadStream } = require("fs");
 const { join } = require("path");
 const path = require("path");
+const { finished } = require("stream");
 
 // Require third-party dependencies
 const { performance } = require("perf_hooks");
 const { createHash } = require("crypto");
+
+
+/**
+ * @version 0.1.0
+ *
+ * @async
+ * @param {!ReadbleStream} stream is a ReadbleStream
+ * @description wait the end of a ReadbleStream and permit to throw eventual stream error
+ * @returns {Promise<number>}
+ */
+async function run(stream) {
+    await finished(stream, (err) => {
+        if (err) {
+            console.error("Stream failed.", err);
+        }
+        else {
+            console.log("Stream is done reading.");
+        }
+    });
+}
 
 /**
  * @version 0.1.0
@@ -141,18 +162,11 @@ async function readTime(target) {
 
         return (performance.now() - start).toFixed(2);
     }
-    const time = await new Promise((resolve, reject) => {
-        const stream = createReadStream(target, { highWaterMark: 64000 });
-        const start = performance.now();
-        stream.on("data", () => {
-            // do thing
-        });
-        stream.on("end", () => {
-            resolve((performance.now() - start).toFixed(2));
-        });
-    });
+    const stream = createReadStream(target, { highWaterMark: 64000 });
+    const start = performance.now();
+    run(stream).catch(console.error);
 
-    return time;
+    return (performance.now() - start).toFixed(2);
 }
 
 /**

@@ -14,6 +14,14 @@ const alert = require("@slimio/alert");
 const metrics = require("@slimio/metrics");
 const Scheduler = require("@slimio/scheduler");
 
+// Constants
+const cfg = new Config(join(__dirname, "config.json"), {
+    createOnNoEntry: true,
+    autoReload: true,
+    writeOnSet: true
+});
+let intervalSet;
+
 // Create addon FSC
 const FSC = new Addon("FSC", {
     version: "0.1.0",
@@ -21,8 +29,6 @@ const FSC = new Addon("FSC", {
 }).lockOn("events");
 const { Entity } = metrics(FSC);
 // const { Alarm } = alert(FSC);
-
-let intervalId;
 
 // Déclare entities and MIC
 // const MyEntity = new Entity("MyEntity", {
@@ -143,16 +149,10 @@ async function checkRules(rules, target, name, metrics) {
                 break;
             }
         }
-        continue;
     }
 }
 
 FSC.on("awake", async() => {
-    cfg = new Config(join(__dirname, "config.json"), {
-        createOnNoEntry: true,
-        autoReload: true,
-        writeOnSet: true
-    });
     await cfg.read();
 
     let arr = [];
@@ -199,8 +199,8 @@ FSC.on("awake", async() => {
     await FSC.ready();
 });
 
-FSC.on("close", async() => {
-    clearInterval(intervalId);
+FSC.on("stop", async() => {
+    clearInterval(intervalSet);
     await cfg.close();
     console.log("addon stopped");
 });

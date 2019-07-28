@@ -1,3 +1,5 @@
+require("make-promises-safe");
+
 // Require Node.js Dependencies
 const { readdir, stat, readFile } = require("fs").promises;
 const { createReadStream } = require("fs");
@@ -137,20 +139,18 @@ async function readTime(target) {
 
         return (performance.now() - start).toFixed(2);
     }
-    let arr;
-    const promise1 = new Promise((resolve, reject) => {
+    const time = await new Promise((resolve, reject) => {
         const stream = createReadStream(target, { highWaterMark: 64000 });
         const start = performance.now();
         stream.on("data", () => {
             // do thing
         });
         stream.on("end", () => {
-            resolve(arr = (performance.now() - start).toFixed(2));
+            resolve((performance.now() - start).toFixed(2));
         });
     });
-    await promise1;
 
-    return arr;
+    return time;
 }
 
 /**
@@ -167,24 +167,22 @@ async function spaceOfTarget(target) {
         size += st.size;
         const { dir } = path.parse(target);
         const total = await dirSize(dir);
-        const result = size * 100 / total;
 
-        return result.toFixed(2);
+        return (size * 100 / total).toFixed(2);
     }
 
     const repSize = await dirSize(target);
     const { dir } = path.parse(target);
     const total = await dirSize(dir);
-    const result = repSize * 100 / total;
 
-    return result.toFixed(2);
+    return (repSize * 100 / total).toFixed(2);
 }
 
 /**
  * @async
  * @func integrity
  * @param {!String} target location
- * @desc check the integrity of a file
+ * @desc return the integrity of a file
  * @returns {Promise<String>}
  */
 async function integrity(target) {
@@ -192,24 +190,21 @@ async function integrity(target) {
     if (st.isFile()) {
         if (st.size < 64000) {
             const str = await readFile(target, "utf-8");
-            const shasum = createHash("sha1").update(str).digest("utf8");
 
-            return shasum;
+            return createHash("sha1").update(str).digest("utf8");
         }
-        let arr;
-        const promise1 = new Promise((resolve, reject) => {
+        const integrity = await new Promise((resolve, reject) => {
             const stream = createReadStream(target, { highWaterMark: 64000 });
             let data = "";
             stream.on("data", (chunk) => {
                 data += chunk;
             });
             stream.on("end", () => {
-                resolve(arr = createHash("sha1").update(data).digest("utf8"));
+                resolve(createHash("sha1").update(data).digest("utf8"));
             });
         });
-        await promise1;
 
-        return arr;
+        return integrity;
     }
 
     return console.log("vous devez fournir un fichier en target");

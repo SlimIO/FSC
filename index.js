@@ -58,15 +58,16 @@ async function checkRules(rules, target, name, metrics) {
             }
             case "files_number":
             {
-                const it = await filesNumber(target, name);
                 if (st.isFile()) {
+                    console.log(`${name} : ${rule.name} | the target muste be a path to a repository`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "files_number_alarm",
                     //     entity: MyEntity
                     // });
                     break;
                 }
-                else if (it > rule.value) {
+                const it = await filesNumber(target, name);
+                if (st.isDirectory() && it > rule.value) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "files_number_alarm",
@@ -77,15 +78,16 @@ async function checkRules(rules, target, name, metrics) {
             }
             case "repository_number":
             {
-                const it = await repositoryNumber(target, name);
                 if (st.isFile()) {
+                    console.log(`${name} : ${rule.name} | the target muste be a path to a repository`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "repository_number_alarm",
                     //     entity: MyEntity
                     // });
                     break;
                 }
-                else if (it > rule.value) {
+                const it = await repositoryNumber(target, name);
+                if (st.isDirectory() && it > rule.value) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "repository_number_alarm",
@@ -110,7 +112,7 @@ async function checkRules(rules, target, name, metrics) {
             {
                 const it = await spaceOfTarget(target);
                 if (it > rule.value) {
-                    console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
+                    console.log(`${name} : ${rule.name} | reached | ${it} per cent, expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "size_limiter_alarm",
                     //     entity: MyEntity
@@ -120,15 +122,16 @@ async function checkRules(rules, target, name, metrics) {
             }
             case "read_time":
             {
-                const it = await readTime(target);
                 if (st.isDirectory()) {
+                    console.log(`${name} : ${rule.name} | the target muste be a path to a file`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "readtime_alarm",
                     //     entity: MyEntity
                     // });
                     break;
                 }
-                else if (it > rule.value) {
+                const it = await readTime(target, name);
+                if (st.isFile() && it > rule.value) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "readtime_alarm",
@@ -138,6 +141,7 @@ async function checkRules(rules, target, name, metrics) {
                 break;
             }
         }
+        continue;
     }
 }
 
@@ -152,20 +156,18 @@ FSC.on("awake", async() => {
     let arr = [];
     cfg.observableOf("profiles").subscribe({
         next(currProfiles) {
-            const intervalTest = Object.values(currProfiles);
-            if (intervalTest.length === 0) {
+            const profiles = Object.values(currProfiles);
+            if (profiles.length === 0) {
                 arr = [];
             }
 
-            for (let id = 0; id < intervalTest.length; id++) {
-                const setRules = new Set();
-                setRules.add(intervalTest[id].name);
-                if (setRules.has("integrity")) {
-                    intervalTest[id].started = false;
+            for (let id = 0; id < profiles.length; id++) {
+                if (profiles[id].integrity) {
+                    profiles[id].started = false;
                 }
-                const interval = intervalTest[id].interval;
-                intervalTest[id].interval = new Scheduler({ interval });
-                arr[id] = intervalTest[id];
+                const interval = profiles[id].interval;
+                profiles[id].interval = new Scheduler({ interval });
+                arr[id] = profiles[id];
             }
         },
         error(err) {

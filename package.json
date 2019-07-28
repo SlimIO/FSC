@@ -50,15 +50,15 @@
         "@commitlint/cli": "^8.0.0",
         "@commitlint/config-conventional": "^8.0.0",
         "@escommunity/minami": "^1.0.0",
-        "@slimio/eslint-config": "^2.0.4",
+        "@slimio/eslint-config": "^3.0.2",
+        "@slimio/psp": "^0.5.3",
         "ava": "^2.1.0",
+        "cross-env": "^5.2.0",
         "eslint": "^5.16.0",
         "husky": "^2.4.1",
         "jsdoc": "^3.6.2",
-        "pkg-ok": "^2.3.1",
-        "cross-env": "^5.2.0",
-        "@slimio/psp": "^0.5.3",
-        "nyc": "^14.1.1"
+        "nyc": "^14.1.1",
+        "pkg-ok": "^2.3.1"
     },
     "engines": {
         "node": ">=10"

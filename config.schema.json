@@ -46,8 +46,7 @@
                                             "files_number",
                                             "repository_number",
                                             "size_limiter",
-                                            "read_time",
-                                            "integrity"
+                                            "read_time"
                                         ]
                                     },
                                     "value": {

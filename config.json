@@ -2,37 +2,15 @@
     "profiles": {
         "profile_1": {
             "name": "profile_1",
-            "target": "E:/Code/data/test.txt",
+            "target": "C:/Users/Capi/TEST/data/test.txt",
             "interval": 1,
             "active": true,
             "metrics": true,
+            "integrity": true,
             "rules": [
                 {
-                    "name": "age_limiter",
-                    "value": 9999999999999
-                },
-                {
                     "name": "space_limiter",
-                    "value": 39999999999
-                },
-                {
-                    "name": "files_number",
-                    "value": 39999999
-                },
-                {
-                    "name": "repository_number",
-                    "value": 199999
-                },
-                {
-                    "name": "size_limiter",
-                    "value": 10
-                },
-                {
-                    "name": "read_time",
-                    "value": 599
-                },
-                {
-                    "name": "integrity"
+                    "value": 2
                 }
             ]
         }

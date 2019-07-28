@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { access, stat } = require("fs").promises;
 const { join } = require("path");
@@ -32,12 +34,12 @@ let intervalId;
  * @version 0.1.0
  *
  * @async
- * @param {Array<String>} rules profile
- * @param {!String} target location
- * @param {!String} name profile
- * @param {!Boolean} metrics profile
- * @desc Check the active rules of a profile and send an alarm when the rules are reached.
- * @return {Promise<void>}
+ * @param {Array<string>} rules profile
+ * @param {!string} target location
+ * @param {!string} name profile
+ * @param {!boolean} metrics profile
+ * @description Check the active rules of a profile and send an alarm when the rules are reached.
+ * @returns {Promise<void>}
  */
 // eslint-disable-next-line
 async function checkRules(rules, target, name, metrics) {

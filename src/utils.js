@@ -1,3 +1,5 @@
+"use strict";
+
 require("make-promises-safe");
 
 // Require Node.js Dependencies
@@ -14,9 +16,9 @@ const { createHash } = require("crypto");
  * @version 0.1.0
  *
  * @async
- * @param {!String} target location
- * @desc Return the age of a repository/file inside a parent repository
- * @returns {Promise<Number>}
+ * @param {!string} target location
+ * @description Return the age of a repository/file inside a parent repository
+ * @returns {Promise<number>}
  */
 async function entityAge(target) {
     const { birthtimeMs } = await stat(target);
@@ -29,10 +31,10 @@ async function entityAge(target) {
  * @version 0.1.0
  *
  * @async
- * @param {!String} target location
- * @param {!String} name of the actual profile
- * @desc Return the number of files inside a parent repository
- * @return {Promise<Number>}
+ * @param {!string} target location
+ * @param {!string} name of the actual profile
+ * @description Return the number of files inside a parent repository
+ * @returns {Promise<number>}
  */
 async function filesNumber(target, name) {
     const st = await stat(target);
@@ -54,11 +56,11 @@ async function filesNumber(target, name) {
  * @version 0.1.0
  *
  * @async
- * @method repositoryNumber
- * @param {!String} target location
- * @param {!String} name of the actual profile
- * @desc Return the number of repository inside a parent repository
- * @return {Promise<Number>}
+ * @function repositoryNumber
+ * @param {!string} target location
+ * @param {!string} name of the actual profile
+ * @description Return the number of repository inside a parent repository
+ * @returns {Promise<number>}
  */
 async function repositoryNumber(target, name) {
     const st = await stat(target);
@@ -77,13 +79,13 @@ async function repositoryNumber(target, name) {
 }
 
 /**
-* @async
-* @generator
-* @func recSize
-* @param {!String} location target
-* @desc Get size of a given directory recursively
-* @returns {AsyncIterableIterator<Number>}
-*/
+ * @async
+ * @generator
+ * @function recSize
+ * @param {!string} location target
+ * @description Get size of a given directory recursively
+ * @returns {AsyncIterableIterator<number>}
+ */
 async function* recSize(location = null) {
     const target = location === null ? target : location;
     const files = await readdir(location);
@@ -104,10 +106,10 @@ async function* recSize(location = null) {
 
 /**
  * @async
- * @func dirSize
- * @param {!String} location location
- * @desc Get size of a given directory recursively
- * @returns {Promise<Number>}
+ * @function dirSize
+ * @param {!string} location location
+ * @description Get size of a given directory recursively
+ * @returns {Promise<number>}
  */
 async function dirSize(location = null) {
     const target = location === null ? target : location;
@@ -126,10 +128,10 @@ async function dirSize(location = null) {
 
 /**
  * @async
- * @func readTime
- * @param {!String} target location
- * @desc Get the time of a given file in milliseconds
- * @returns {Promise<Number>}
+ * @function readTime
+ * @param {!string} target location
+ * @description Get the time of a given file in milliseconds
+ * @returns {Promise<number>}
  */
 async function readTime(target) {
     const st = await stat(target);
@@ -155,10 +157,10 @@ async function readTime(target) {
 
 /**
  * @async
- * @func spaceOfTarget
- * @param {!String} target location
- * @desc it is used to get the size of a file or folder in percent relative to the parent folder
- * @returns {Promise<Number>}
+ * @function spaceOfTarget
+ * @param {!string} target location
+ * @description it is used to get the size of a file or folder in percent relative to the parent folder
+ * @returns {Promise<number>}
  */
 async function spaceOfTarget(target) {
     const st = await stat(target);
@@ -180,10 +182,10 @@ async function spaceOfTarget(target) {
 
 /**
  * @async
- * @func integrity
- * @param {!String} target location
- * @desc return the integrity of a file
- * @returns {Promise<String>}
+ * @function integrity
+ * @param {!string} target location
+ * @description return the integrity of a file
+ * @returns {Promise<string>}
  */
 async function integrity(target) {
     const st = await stat(target);

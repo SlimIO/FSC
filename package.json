@@ -34,7 +34,7 @@
     ],
     "files": [
         "index.js",
-        "./src"
+        "src"
     ],
     "author": "SlimIO",
     "license": "MIT",

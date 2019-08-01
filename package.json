@@ -32,6 +32,10 @@
         "reactive",
         "hotreload"
     ],
+    "files": [
+        "index.js",
+        "src/utils.js"
+    ],
     "author": "SlimIO",
     "license": "MIT",
     "bugs": {

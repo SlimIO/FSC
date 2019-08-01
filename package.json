@@ -43,7 +43,7 @@
         "@slimio/alert": "^0.2.0",
         "@slimio/config": "^0.13.0",
         "@slimio/metrics": "^0.4.0",
-        "@slimio/scheduler": "^0.6.0",
+        "@slimio/scheduler": "^0.7.0",
         "make-promises-safe": "^5.0.0"
     },
     "devDependencies": {

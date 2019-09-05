@@ -43,7 +43,7 @@
     },
     "homepage": "https://github.com/SlimIO/Fsc#readme",
     "dependencies": {
-        "@slimio/addon": "^0.18.0",
+        "@slimio/addon": "^0.21.1",
         "@slimio/alert": "^0.2.0",
         "@slimio/config": "^0.13.0",
         "@slimio/metrics": "^0.4.0",

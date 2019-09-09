@@ -156,26 +156,30 @@ FSC.on("awake", async() => {
     await cfg.read();
 
     let arr = [];
-    cfg.observableOf("profiles").subscribe({
-        next(currProfiles) {
-            const profiles = Object.values(currProfiles);
-            if (profiles.length === 0) {
-                arr = [];
-            }
+    const profiles = cfg.get("profiles");
 
-            for (let id = 0; id < profiles.length; id++) {
-                if (profiles[id].integrity) {
-                    profiles[id].started = false;
+    if (typeof profiles === "object") {
+        cfg.observableOf("profiles").subscribe({
+            next(currProfiles) {
+                const profiles = Object.values(currProfiles);
+                if (profiles.length === 0) {
+                    arr = [];
                 }
-                const interval = profiles[id].interval;
-                profiles[id].interval = new Scheduler({ interval });
-                arr[id] = profiles[id];
+
+                for (let id = 0; id < profiles.length; id++) {
+                    if (profiles[id].integrity) {
+                        profiles[id].started = false;
+                    }
+                    const interval = profiles[id].interval;
+                    profiles[id].interval = new Scheduler({ interval });
+                    arr[id] = profiles[id];
+                }
+            },
+            error(err) {
+                console.error(err);
             }
-        },
-        error(err) {
-            console.error(err);
-        }
-    });
+        });
+    }
     intervalSet = setInterval(async() => {
         for (const profile of arr) {
             if (!profile.interval.walk()) {
@@ -185,21 +189,24 @@ FSC.on("awake", async() => {
                 continue;
             }
             if (Reflect.has(profile, "started")) {
+                const { sha512: [Hash] } = await integrity(profile.target);
+
                 if (profile.started === false) {
-                    profile.started = await integrity(profile.target);
+                    profile.started = Hash.digest;
                 }
-                else if (profile.started !== await integrity(profile.target)) {
+                else if (profile.started !== Hash.digest) {
                     console.log(`${profile.name} corruption d'integrité du fichier ${profile.target}`);
                 }
             }
             await access(profile.target);
             await checkRules(profile.rules, profile.target, profile.name, profile.metrics);
+            console.log("-------------------------------------------------------------------");
         }
     }, 100);
     await FSC.ready();
 });
 
-FSC.on("stop", async() => {
+FSC.on("sleep", async() => {
     clearInterval(intervalSet);
     await cfg.close();
     console.log("addon stopped");

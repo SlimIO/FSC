@@ -8,11 +8,10 @@ const { createReadStream } = require("fs");
 const { join } = require("path");
 const path = require("path");
 const { finished } = require("stream");
+const ssri = require("ssri");
 
 // Require third-party dependencies
 const { performance } = require("perf_hooks");
-const { createHash } = require("crypto");
-
 
 /**
  * @version 0.1.0
@@ -207,20 +206,12 @@ async function integrity(target) {
         if (st.size < 64000) {
             const str = await readFile(target, "utf-8");
 
-            return createHash("sha1").update(str).digest("utf8");
+            return ssri.create("sha512").update(str).digest("utf8");
         }
-        const integrity = await new Promise((resolve, reject) => {
-            const stream = createReadStream(target, { highWaterMark: 64000 });
-            let data = "";
-            stream.on("data", (chunk) => {
-                data += chunk;
-            });
-            stream.on("end", () => {
-                resolve(createHash("sha1").update(data).digest("utf8"));
-            });
-        });
 
-        return integrity;
+        return ssri.fromStream(createReadStream(target, { highWaterMark: 64000 }), {
+            algorithms: ["sha512"]
+        });
     }
 
     return console.log("vous devez fournir un fichier en target");

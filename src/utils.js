@@ -200,7 +200,7 @@ async function spaceOfTarget(target) {
  * @description return the integrity of a file
  * @returns {Promise<string>}
  */
-async function integrity(target) {
+async function integ(target) {
     const st = await stat(target);
     if (st.isFile()) {
         if (st.size < 64000) {
@@ -219,5 +219,5 @@ async function integrity(target) {
 
 module.exports = {
     entityAge, filesNumber, repositoryNumber,
-    recSize, dirSize, readTime, integrity, spaceOfTarget
+    recSize, dirSize, readTime, integ, spaceOfTarget
 };

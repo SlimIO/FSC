@@ -5,7 +5,7 @@ const { access, stat } = require("fs").promises;
 const { join } = require("path");
 
 const { entityAge, filesNumber, repositoryNumber,
-    dirSize, readTime, integrity, spaceOfTarget } = require("./src/utils");
+    dirSize, readTime, integ, spaceOfTarget } = require("./src/utils");
 
 // Require Slimio Dependencies
 const Config = require("@slimio/config");
@@ -13,19 +13,14 @@ const Addon = require("@slimio/addon");
 const alert = require("@slimio/alert");
 const metrics = require("@slimio/metrics");
 const Scheduler = require("@slimio/scheduler");
+const profilesLoader = require("@slimio/profiles");
 
-// Constants
-const cfg = new Config(join(__dirname, "config.json"), {
-    createOnNoEntry: true,
-    autoReload: true,
-    writeOnSet: true
-});
+let profiles;
 let intervalSet;
-
 // Create addon FSC
 const FSC = new Addon("FSC", {
     version: "0.1.0",
-    verbose: true
+    verbose: false
 }).lockOn("events");
 const { Entity } = metrics(FSC);
 // const { Alarm } = alert(FSC);
@@ -153,62 +148,40 @@ async function checkRules(rules, target, name, metrics) {
 }
 
 FSC.on("awake", async() => {
-    await cfg.read();
-
-    let arr = [];
-    const profiles = cfg.get("profiles");
-
-    if (typeof profiles === "object") {
-        cfg.observableOf("profiles").subscribe({
-            next(currProfiles) {
-                const profiles = Object.values(currProfiles);
-                if (profiles.length === 0) {
-                    arr = [];
-                }
-
-                for (let id = 0; id < profiles.length; id++) {
-                    if (profiles[id].integrity) {
-                        profiles[id].started = false;
-                    }
-                    const interval = profiles[id].interval;
-                    profiles[id].interval = new Scheduler({ interval });
-                    arr[id] = profiles[id];
-                }
-            },
-            error(err) {
-                console.error(err);
-            }
-        });
+    try {
+        profiles = await profilesLoader(join(__dirname, "config.json"));
     }
-    intervalSet = setInterval(async() => {
-        for (const profile of arr) {
-            if (!profile.interval.walk()) {
-                continue;
-            }
-            if (!profile.active) {
-                continue;
-            }
-            if (Reflect.has(profile, "started")) {
-                const { sha512: [Hash] } = await integrity(profile.target);
+    catch (err) {
+        console.log(err);
+    }
+    let isStarted = false;
+    profiles.events.on("walk", async(name, payload) => {
+        const { rules, target, metrics, integrity } = payload;
 
-                if (profile.started === false) {
-                    profile.started = Hash.digest;
-                }
-                else if (profile.started !== Hash.digest) {
-                    console.log(`${profile.name} corruption d'integrité du fichier ${profile.target}`);
-                }
-            }
-            await access(profile.target);
-            await checkRules(profile.rules, profile.target, profile.name, profile.metrics);
-            console.log("-------------------------------------------------------------------");
+        try {
+            await access(target);
         }
-    }, 100);
+        catch (err) {
+            console.log(err);
+        }
+        if (integrity) {
+            if (isStarted === false) {
+                const { sha512: [{ digest: val }] } = await integ(target);
+                isStarted = val;
+            }
+            else if (isStarted !== await integ(target)) {
+                console.log("le fichier est corrompu");
+            }
+        }
+        await checkRules(rules, target, name, metrics);
+        console.log("-------------------------------------------------------------------");
+    });
+
     await FSC.ready();
 });
 
 FSC.on("sleep", async() => {
-    clearInterval(intervalSet);
-    await cfg.close();
+    await profiles.free();
     console.log("addon stopped");
 });
 

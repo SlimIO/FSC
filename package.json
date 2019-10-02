@@ -45,11 +45,8 @@
     "dependencies": {
         "@slimio/addon": "^0.21.1",
         "@slimio/alert": "^0.2.0",
-        "@slimio/config": "^0.14.1",
         "@slimio/metrics": "^0.4.0",
         "@slimio/profiles": "^0.1.1",
-        "@slimio/scheduler": "^0.8.0",
-        "make-promises-safe": "^5.0.0",
         "ssri": "^6.0.1"
     },
     "devDependencies": {

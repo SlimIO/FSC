@@ -6,16 +6,12 @@
             "patternProperties": {
                 "[a-zA-Z0-9_-]": {
                     "type": "object",
-                    "required": [
-                        "target",
-                        "interval",
-                        "active",
-                        "rules"
-                    ],
+                    "required": ["target"],
                     "additionalProperties": false,
                     "properties": {
                         "target": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "the targetted filesystem (path or glob regex)"
                         },
                         "interval": {
                             "type": ["number", "string"],
@@ -28,10 +24,14 @@
                             "default": true
                         },
                         "metrics": {
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "enable metric",
+                            "default": true
                         },
                         "integrity": {
-                            "type": "boolean"
+                            "type": "boolean",
+                            "description": "enable integrity checksum (only work with standalone file as target)",
+                            "default": false
                         },
                         "rules": {
                             "type": "array",

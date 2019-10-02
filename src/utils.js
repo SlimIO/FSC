@@ -1,43 +1,23 @@
 "use strict";
 
-require("make-promises-safe");
-
 // Require Node.js Dependencies
-const { readdir, stat, readFile } = require("fs").promises;
-const { createReadStream } = require("fs");
-const { join } = require("path");
-const path = require("path");
-const { finished } = require("stream");
-const ssri = require("ssri");
-
-// Require third-party dependencies
+const {
+    createReadStream,
+    promises: { readdir, stat, readFile }
+} = require("fs");
+const { join, parse } = require("path");
 const { performance } = require("perf_hooks");
 
-/**
- * @version 0.1.0
- *
- * @async
- * @param {!ReadbleStream} stream is a ReadbleStream
- * @description wait the end of a ReadbleStream and permit to throw eventual stream error
- * @returns {Promise<number>}
- */
-async function run(stream) {
-    await finished(stream, (err) => {
-        if (err) {
-            console.error("Stream failed.", err);
-        }
-        else {
-            console.log("Stream is done reading.");
-        }
-    });
-}
+// Require Third-party Dependencies
+const ssri = require("ssri");
 
 /**
  * @version 0.1.0
  *
  * @async
- * @param {!string} target location
+ * @function entityAge
  * @description Return the age of a repository/file inside a parent repository
+ * @param {!string} target location
  * @returns {Promise<number>}
  */
 async function entityAge(target) {
@@ -51,16 +31,18 @@ async function entityAge(target) {
  * @version 0.1.0
  *
  * @async
- * @param {!string} target location
- * @param {!string} name of the actual profile
+ * @function filesNumber
  * @description Return the number of files inside a parent repository
+ * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function filesNumber(target, name) {
+async function filesNumber(target) {
     const st = await stat(target);
     let files = 0;
     if (st.isDirectory()) {
         const repo = await readdir(target);
+
+        // TODO: refactor in async
         for (const file of repo) {
             const test = await stat(join(target, file));
             if (test.isFile()) {
@@ -77,16 +59,18 @@ async function filesNumber(target, name) {
  *
  * @async
  * @function repositoryNumber
- * @param {!string} target location
- * @param {!string} name of the actual profile
  * @description Return the number of repository inside a parent repository
+ * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function repositoryNumber(target, name) {
+async function repositoryNumber(target) {
     const st = await stat(target);
     let repository = 0;
+
     if (st.isDirectory()) {
         const repo = await readdir(target);
+
+        // TODO: refactor in async
         for (const file of repo) {
             const test = await stat(join(target, file));
             if (test.isDirectory()) {
@@ -102,8 +86,8 @@ async function repositoryNumber(target, name) {
  * @async
  * @generator
  * @function recSize
- * @param {!string} location target
  * @description Get size of a given directory recursively
+ * @param {!string} location target
  * @returns {AsyncIterableIterator<number>}
  */
 async function* recSize(location = null) {
@@ -119,7 +103,7 @@ async function* recSize(location = null) {
             yield* recSize(join(location, files[id]));
         }
         else {
-            yield [files[id], dc.size];
+            yield dc.size;
         }
     }
 }
@@ -127,19 +111,18 @@ async function* recSize(location = null) {
 /**
  * @async
  * @function dirSize
- * @param {!string} location location
  * @description Get size of a given directory recursively
+ * @param {!string} location location
  * @returns {Promise<number>}
  */
 async function dirSize(location = null) {
-    const target = location === null ? target : location;
     const st = await stat(location);
     if (st.isFile()) {
         return st.size;
     }
 
     let sum = 0;
-    for await (const [file, size] of recSize(location)) {
+    for await (const size of recSize(location)) {
         sum += size;
     }
 
@@ -154,16 +137,8 @@ async function dirSize(location = null) {
  * @returns {Promise<number>}
  */
 async function readTime(target) {
-    const st = await stat(target);
-    if (st.size < 64000) {
-        const start = performance.now();
-        await readFile(target);
-
-        return (performance.now() - start).toFixed(2);
-    }
-    const stream = createReadStream(target, { highWaterMark: 64000 });
     const start = performance.now();
-    run(stream).catch(console.error);
+    await readFile(target);
 
     return (performance.now() - start).toFixed(2);
 }
@@ -171,53 +146,50 @@ async function readTime(target) {
 /**
  * @async
  * @function spaceOfTarget
- * @param {!string} target location
  * @description it is used to get the size of a file or folder in percent relative to the parent folder
+ * @param {!string} target location
  * @returns {Promise<number>}
  */
 async function spaceOfTarget(target) {
     const st = await stat(target);
-    let size = 0;
-    if (st.isFile()) {
-        size += st.size;
-        const { dir } = path.parse(target);
-        const total = await dirSize(dir);
-
-        return (size * 100 / total).toFixed(2);
-    }
-
-    const repSize = await dirSize(target);
-    const { dir } = path.parse(target);
+    const { dir } = parse(target);
     const total = await dirSize(dir);
+
+    if (st.isFile()) {
+        return (st.size * 100 / total).toFixed(2);
+    }
+    const repSize = await dirSize(target);
 
     return (repSize * 100 / total).toFixed(2);
 }
 
 /**
  * @async
- * @function integrity
+ * @function generateFileIntegrityHash
+ * @description generate and return an integrity hash for a given file (target).
  * @param {!string} target location
- * @description return the integrity of a file
  * @returns {Promise<string>}
+ *
+ * @throws {Error}
  */
-async function integ(target) {
+async function generateFileIntegrityHash(target) {
     const st = await stat(target);
-    if (st.isFile()) {
-        if (st.size < 64000) {
-            const str = await readFile(target, "utf-8");
-
-            return ssri.create("sha512").update(str).digest("utf8");
-        }
-
-        return ssri.fromStream(createReadStream(target, { highWaterMark: 64000 }), {
-            algorithms: ["sha512"]
-        });
+    if (!st.isFile()) {
+        throw new Error("target must be a file");
     }
 
-    return console.log("vous devez fournir un fichier en target");
+    return ssri.fromStream(createReadStream(target), {
+        algorithms: ["sha512"]
+    });
 }
 
 module.exports = {
-    entityAge, filesNumber, repositoryNumber,
-    recSize, dirSize, readTime, integ, spaceOfTarget
+    entityAge,
+    filesNumber,
+    repositoryNumber,
+    recSize,
+    dirSize,
+    readTime,
+    generateFileIntegrityHash,
+    spaceOfTarget
 };

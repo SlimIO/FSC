@@ -4,48 +4,48 @@
 const { access, stat } = require("fs").promises;
 const { join } = require("path");
 
-const { entityAge, filesNumber, repositoryNumber,
-    dirSize, readTime, integ, spaceOfTarget } = require("./src/utils");
-
 // Require Slimio Dependencies
-const Config = require("@slimio/config");
 const Addon = require("@slimio/addon");
 const alert = require("@slimio/alert");
 const metrics = require("@slimio/metrics");
-const Scheduler = require("@slimio/scheduler");
 const profilesLoader = require("@slimio/profiles");
 
+// Require Internal Dependencies
+const {
+    entityAge, filesNumber, repositoryNumber,
+    dirSize, readTime, spaceOfTarget
+} = require("./src/utils");
+
 let profiles;
-let intervalSet;
+
 // Create addon FSC
 const FSC = new Addon("FSC", {
     version: "0.1.0",
     verbose: false
 }).lockOn("events");
 const { Entity } = metrics(FSC);
-// const { Alarm } = alert(FSC);
+const { Alarm } = alert(FSC);
 
-// Déclare entities and MIC
-// const MyEntity = new Entity("MyEntity", {
-//     description: "Central metricsing"
-// });
-
+// Declare the root entity
+const E_FS = new Entity("FileSystem", {
+    description: "FileSystem root/parent entity"
+});
 
 /**
  * @version 0.1.0
  *
  * @async
- * @param {Array<string>} rules profile
- * @param {!string} target location
- * @param {!string} name profile
- * @param {!boolean} metrics profile
+ * @function checkRules
  * @description Check the active rules of a profile and send an alarm when the rules are reached.
+ * @param {!string} name profile name
+ * @param {!string} target target location (path or glob)
+ * @param {Array<string>} rules watchers
  * @returns {Promise<void>}
  */
-// eslint-disable-next-line
-async function checkRules(rules, target, name, metrics) {
+async function checkRules(name, target, rules) {
+    const st = await stat(target);
+
     for (const rule of rules) {
-        const st = await stat(target);
         switch (rule.name) {
             case "age_limiter":
             {
@@ -54,7 +54,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "age_limiter_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -65,7 +65,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | the target muste be a path to a repository`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "files_number_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                     break;
                 }
@@ -74,7 +74,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "files_number_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -85,7 +85,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | the target muste be a path to a repository`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "repository_number_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                     break;
                 }
@@ -94,7 +94,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "repository_number_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -106,7 +106,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "size_limiter_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -118,7 +118,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} per cent, expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "size_limiter_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -129,7 +129,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | the target muste be a path to a file`);
                     // new Alarm(`${name} : ${rule.name} target must be a path to a repository`, {
                     //     correlateKey: "readtime_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                     break;
                 }
@@ -138,7 +138,7 @@ async function checkRules(rules, target, name, metrics) {
                     console.log(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`);
                     // new Alarm(`${name} : ${rule.name} | reached | ${it} expected => ${rule.value}`, {
                     //     correlateKey: "readtime_alarm",
-                    //     entity: MyEntity
+                    //     entity: E_FS
                     // });
                 }
                 break;
@@ -148,33 +148,20 @@ async function checkRules(rules, target, name, metrics) {
 }
 
 FSC.on("awake", async() => {
-    try {
-        profiles = await profilesLoader(join(__dirname, "config.json"));
-    }
-    catch (err) {
-        console.log(err);
-    }
-    let isStarted = false;
+    profiles = await profilesLoader(join(__dirname, "config.json"));
     profiles.events.on("walk", async(name, payload) => {
-        const { rules, target, metrics, integrity } = payload;
-
         try {
+            const { target, rules = [] } = payload;
+            // TODO: generate RawQos here
             await access(target);
+
+            if (rules.length > 0) {
+                await checkRules(name, target, rules);
+            }
         }
         catch (err) {
             console.log(err);
         }
-        if (integrity) {
-            if (isStarted === false) {
-                const { sha512: [{ digest: val }] } = await integ(target);
-                isStarted = val;
-            }
-            else if (isStarted !== await integ(target)) {
-                console.log("le fichier est corrompu");
-            }
-        }
-        await checkRules(rules, target, name, metrics);
-        console.log("-------------------------------------------------------------------");
     });
 
     await FSC.ready();
@@ -182,7 +169,6 @@ FSC.on("awake", async() => {
 
 FSC.on("sleep", async() => {
     await profiles.free();
-    console.log("addon stopped");
 });
 
 module.exports = FSC;

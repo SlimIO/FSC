@@ -1,15 +1,13 @@
-"use strict";
-
 // Require Node.js Dependencies
-const {
-    createReadStream,
-    promises: { readdir, stat, readFile }
-} = require("fs");
-const { join, parse } = require("path");
-const { performance } = require("perf_hooks");
+import { promises as fs } from "fs";
+const { createReadStream,
+    promises: { readdir, stat, readFile } } = fs;
+
+import { join, parse } from "path";
+import { performance } from "perf_hooks";
 
 // Require Third-party Dependencies
-const ssri = require("ssri");
+import ssri from "ssri";
 
 /**
  * @version 0.1.0

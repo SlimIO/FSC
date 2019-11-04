@@ -10,7 +10,7 @@ import metrics from "@slimio/metrics";
 import profilesLoader from "@slimio/profiles";
 
 // Require Third-party Dependencies
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 // Node.js CJS CONSTANTS
 const __filename = fileURLToPath(import.meta.url);

@@ -1,20 +1,24 @@
-"use strict";
-
 // Require Node.js Dependencies
-const { access, stat } = require("fs").promises;
-const { join } = require("path");
+import { promises as fs } from "fs";
+import { join, dirname } from "path";
+const { access, stat } = fs;
 
 // Require Slimio Dependencies
-const Addon = require("@slimio/addon");
-const alert = require("@slimio/alert");
-const metrics = require("@slimio/metrics");
-const profilesLoader = require("@slimio/profiles");
+import Addon from "@slimio/addon";
+import alert from "@slimio/alert";
+import metrics from "@slimio/metrics";
+import profilesLoader from "@slimio/profiles";
+
+// Require Third-party Dependencies
+import { fileURLToPath } from 'url';
+
+// Node.js CJS CONSTANTS
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Require Internal Dependencies
-const {
-    entityAge, filesNumber, repositoryNumber,
-    dirSize, readTime, spaceOfTarget
-} = require("./src/utils");
+import { entityAge, filesNumber, repositoryNumber,
+    dirSize, readTime, spaceOfTarget } from "./src/utils";
 
 let profiles;
 

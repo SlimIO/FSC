@@ -18,7 +18,7 @@ const __dirname = dirname(__filename);
 
 // Require Internal Dependencies
 import { entityAge, filesNumber, repositoryNumber,
-    dirSize, readTime, spaceOfTarget } from "./src/utils";
+    dirSize, readTime, spaceOfTarget } from "./src/utils.js";
 
 let profiles;
 
@@ -175,4 +175,4 @@ FSC.on("sleep", async() => {
     await profiles.free();
 });
 
-module.exports = FSC;
+export default FSC;

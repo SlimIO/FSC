@@ -1,10 +1,8 @@
 // Require Node.js Dependencies
-import { promises as fs } from "fs";
-const { createReadStream,
-    promises: { readdir, stat, readFile } } = fs;
-
+import { promises as fs, createReadStream } from "fs";
 import { join, parse } from "path";
 import { performance } from "perf_hooks";
+const { readdir, stat, readFile } = fs;
 
 // Require Third-party Dependencies
 import ssri from "ssri";
@@ -18,7 +16,7 @@ import ssri from "ssri";
  * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function entityAge(target) {
+export async function entityAge(target) {
     const { birthtimeMs } = await stat(target);
     const date = Date.now();
 
@@ -34,7 +32,7 @@ async function entityAge(target) {
  * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function filesNumber(target) {
+export async function filesNumber(target) {
     const st = await stat(target);
     let files = 0;
     if (st.isDirectory()) {
@@ -61,7 +59,7 @@ async function filesNumber(target) {
  * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function repositoryNumber(target) {
+export async function repositoryNumber(target) {
     const st = await stat(target);
     let repository = 0;
 
@@ -88,7 +86,7 @@ async function repositoryNumber(target) {
  * @param {!string} location target
  * @returns {AsyncIterableIterator<number>}
  */
-async function* recSize(location = null) {
+export async function* recSize(location = null) {
     const target = location === null ? target : location;
     const files = await readdir(location);
     const stats = await Promise.all(
@@ -113,7 +111,7 @@ async function* recSize(location = null) {
  * @param {!string} location location
  * @returns {Promise<number>}
  */
-async function dirSize(location = null) {
+export async function dirSize(location = null) {
     const st = await stat(location);
     if (st.isFile()) {
         return st.size;
@@ -134,7 +132,7 @@ async function dirSize(location = null) {
  * @description Get the time of a given file in milliseconds
  * @returns {Promise<number>}
  */
-async function readTime(target) {
+export async function readTime(target) {
     const start = performance.now();
     await readFile(target);
 
@@ -148,7 +146,7 @@ async function readTime(target) {
  * @param {!string} target location
  * @returns {Promise<number>}
  */
-async function spaceOfTarget(target) {
+export async function spaceOfTarget(target) {
     const st = await stat(target);
     const { dir } = parse(target);
     const total = await dirSize(dir);
@@ -170,7 +168,7 @@ async function spaceOfTarget(target) {
  *
  * @throws {Error}
  */
-async function generateFileIntegrityHash(target) {
+export async function generateFileIntegrityHash(target) {
     const st = await stat(target);
     if (!st.isFile()) {
         throw new Error("target must be a file");
@@ -180,14 +178,3 @@ async function generateFileIntegrityHash(target) {
         algorithms: ["sha512"]
     });
 }
-
-module.exports = {
-    entityAge,
-    filesNumber,
-    repositoryNumber,
-    recSize,
-    dirSize,
-    readTime,
-    generateFileIntegrityHash,
-    spaceOfTarget
-};

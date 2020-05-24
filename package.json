@@ -47,7 +47,7 @@
         "@slimio/alert": "^0.2.0",
         "@slimio/metrics": "^0.4.0",
         "@slimio/profiles": "^0.1.2",
-        "ssri": "^7.1.0"
+        "ssri": "^8.0.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.3.5",
